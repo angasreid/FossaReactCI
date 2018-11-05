@@ -21,7 +21,7 @@ jobs:
         curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
       
       - checkout
-        - run: <build command>
+
         - run:
          command: fossa 
            working_directory: <repo_dir>
