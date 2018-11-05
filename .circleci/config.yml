@@ -1,47 +1,24 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
 version: 2
 jobs:
   build:
-
     docker:
-      - image: circleci/openjdk:8-jdk-node-browsers
-
-    environment:
-      TZ: /usr/share/zoneinfo/America/Los_Angeles
-      TRAVIS_REPO_SLUG: facebook/react
-
-    parallelism: 4
-
+      - image: circleci/<language>:<version TAG>
+    steps:
+      - run: |
+          curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | bash
+      - checkout
+  test:
+    docker:
+      - image: circleci/<language>:<version TAG>
     steps:
       - checkout
-
-      - run: echo $CIRCLE_COMPARE_URL | cut -d/ -f7
-
-      - restore_cache:
-          name: Restore node_modules cache
-          keys:
-            - v1-node-{{ arch }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-            - v1-node-{{ arch }}-{{ .Branch }}-
-            - v1-node-{{ arch }}-
-
+      - run: <test command>
       - run:
-          name: Nodejs Version
-          command: node --version
-
-      - run:
-          name: Install Packages
-          command: yarn install --frozen-lockfile
-
-      - run:
-          name: Test Packages
-          command: ./scripts/circleci/test_entry_point.sh
-
-      - save_cache:
-          name: Save node_modules cache
-          key: v1-node-{{ arch }}-{{ .Branch }}-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-            #comment
+        command: fossa test
+        working_directory: <repo_dir>
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
