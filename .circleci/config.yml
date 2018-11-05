@@ -24,7 +24,7 @@ jobs:
         - run: <build command>
         - run:
          command: fossa 
-         working_directory: <repo_dir>
+           working_directory: <repo_dir>
 
       # Download and cache dependencies
       - restore_cache:
@@ -33,7 +33,21 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-      - run: yarn install
+      #...
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/.cache/yarn
+#...
+
 
       - save_cache:
           paths:
