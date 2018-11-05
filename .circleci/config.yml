@@ -22,7 +22,6 @@ jobs:
       
       - checkout
         - run: <build command>
-        - run:
          command: fossa 
            working_directory: <repo_dir>
 
